@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Plano e Diário de Parto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<!-- jsPDF para geração de PDF no navegador -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link rel="stylesheet" href="style_plano_parto.css">
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<style>
+  
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --rose:#F4A5B0;--rose-deep:#C96A7A;--rose-pale:#FDF0F2;
+  --sage:#7DB5A0;--sage-pale:#EDF5F2;
+  --cream:#FAF7F2;--cream-mid:#F0EAE0;
+  --ink:#2C2220;--ink-mid:#5C4D4A;--ink-light:#9A8A87;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink)}
+.app{width:100%;min-height:100vh}
+
+/* ── NAV ── */
+nav{display:flex;align-items:center;justify-content:space-between;padding:1.2rem 2rem;background:var(--cream);border-bottom:0.5px solid var(--cream-mid);position:sticky;top:0;z-index:100;backdrop-filter:blur(8px)}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-icon{width:36px;height:36px;background:var(--rose-deep);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.logo-icon svg{width:18px;height:18px;fill:white}
+.logo-text{font-family:'Playfair Display',serif;font-size:16px;font-weight:500;color:var(--ink)}
+nav ul{list-style:none;display:flex;gap:2rem}
+nav ul li a{font-size:13px;color:var(--ink-mid);text-decoration:none;font-weight:400;transition:color 0.2s}
+nav ul li a:hover{color:var(--rose-deep)}
+.nav-cta{background:var(--rose-deep);color:white!important;padding:8px 20px;border-radius:20px;font-size:13px;text-decoration:none;font-weight:500;transition:opacity 0.2s}
+.nav-cta:hover{opacity:0.88}
+
+/* ── HERO ── */
+.hero{display:grid;grid-template-columns:1fr 1fr;gap:0;min-height:540px;overflow:hidden}
+.hero-left{padding:5rem 3rem;display:flex;flex-direction:column;justify-content:center;background:var(--cream)}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;background:var(--rose-pale);border:0.5px solid var(--rose);color:var(--rose-deep);font-size:12px;font-weight:500;padding:6px 14px;border-radius:20px;margin-bottom:1.5rem;width:fit-content}
+.hero-tag span{width:6px;height:6px;background:var(--rose-deep);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+h1{font-family:'Playfair Display',serif;font-size:42px;line-height:1.18;font-weight:400;color:var(--ink);margin-bottom:1.2rem}
+h1 em{color:var(--rose-deep);font-style:italic}
+.hero-sub{font-size:15px;line-height:1.7;color:var(--ink-mid);max-width:400px;margin-bottom:2.2rem}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn-primary{background:var(--rose-deep);color:white;padding:13px 28px;border-radius:30px;text-decoration:none;font-size:14px;font-weight:500;border:none;cursor:pointer;transition:transform 0.15s,opacity 0.2s;display:inline-block}
+.btn-primary:hover{transform:translateY(-1px);opacity:0.92}
+.btn-secondary{background:transparent;color:var(--ink);padding:13px 28px;border-radius:30px;text-decoration:none;font-size:14px;font-weight:400;border:1px solid var(--cream-mid);cursor:pointer;transition:border-color 0.2s;display:inline-block}
+.btn-secondary:hover{border-color:var(--ink-light)}
+.hero-right{background:linear-gradient(135deg,#F7D6DB 0%,#EBD5E8 50%,#C8DEDA 100%);position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.hero-card-float{background:white;border-radius:16px;padding:1.5rem;box-shadow:0 20px 60px rgba(44,34,32,0.12);max-width:260px;width:90%;position:relative;z-index:2}
+.hero-card-week{font-size:11px;font-weight:500;color:var(--rose-deep);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.hero-card-title{font-family:'Playfair Display',serif;font-size:20px;color:var(--ink);margin-bottom:1rem}
+.week-bar{margin-bottom:8px}
+.week-label{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-light);margin-bottom:5px}
+.week-track{height:6px;background:#F0E8E6;border-radius:3px;overflow:hidden}
+.week-fill{height:100%;background:var(--rose-deep);border-radius:3px;transition:width 1.5s ease}
+.hero-mood{display:flex;gap:8px;margin-top:1rem;flex-wrap:wrap}
+.mood-chip{font-size:11px;padding:4px 10px;border-radius:12px;background:var(--rose-pale);color:var(--rose-deep);font-weight:500}
+.mood-chip.green{background:var(--sage-pale);color:var(--sage)}
+.hero-blob{position:absolute;width:320px;height:320px;border-radius:50%;background:rgba(255,255,255,0.25);top:-80px;right:-80px}
+.hero-blob2{position:absolute;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,0.18);bottom:-50px;left:-30px}
+
+/* ── COMO FUNCIONA ── */
+.section{padding:5rem 3rem}
+.section-label{font-size:12px;font-weight:500;color:var(--rose-deep);letter-spacing:2px;text-transform:uppercase;margin-bottom:0.8rem;text-align:center}
+.section-title{font-family:'Playfair Display',serif;font-size:32px;font-weight:400;text-align:center;color:var(--ink);margin-bottom:0.8rem}
+.section-sub{font-size:15px;color:var(--ink-mid);text-align:center;max-width:500px;margin:0 auto 3.5rem}
+.steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem}
+.step-card{background:white;border-radius:16px;padding:1.5rem;border:0.5px solid var(--cream-mid);position:relative;transition:transform 0.2s,box-shadow 0.2s}
+.step-card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(44,34,32,0.08)}
+.step-num{font-family:'Playfair Display',serif;font-size:48px;color:var(--rose-pale);font-weight:400;line-height:1;position:absolute;top:1rem;right:1.2rem;opacity:0.7}
+.step-icon{width:44px;height:44px;border-radius:12px;background:var(--rose-pale);display:flex;align-items:center;justify-content:center;margin-bottom:1rem;color:var(--rose-deep);font-size:22px}
+.step-icon.sage{background:var(--sage-pale);color:var(--sage)}
+.step-h{font-size:14px;font-weight:500;color:var(--ink);margin-bottom:6px}
+.step-p{font-size:13px;color:var(--ink-mid);line-height:1.6}
+
+/* ── BENEFÍCIOS ── */
+.benefits{padding:5rem 3rem;background:var(--rose-deep);color:white}
+.benefits .section-label{color:rgba(255,255,255,0.6)}
+.benefits .section-title{color:white;margin-bottom:0.8rem}
+.benefits .section-sub{color:rgba(255,255,255,0.75)}
+.benefits-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;max-width:800px;margin:0 auto}
+.benefit-item{background:rgba(255,255,255,0.1);border:0.5px solid rgba(255,255,255,0.2);border-radius:14px;padding:1.5rem;transition:background 0.2s}
+.benefit-item:hover{background:rgba(255,255,255,0.15)}
+.benefit-icon{font-size:28px;margin-bottom:10px}
+.benefit-h{font-size:14px;font-weight:500;margin-bottom:6px}
+.benefit-p{font-size:13px;opacity:0.75;line-height:1.6}
+
+/* ── FORMULÁRIO ── */
+.form-section{background:white;padding:5rem 3rem;border-top:0.5px solid var(--cream-mid);border-bottom:0.5px solid var(--cream-mid)}
+.form-layout{display:grid;grid-template-columns:1fr 2fr;gap:4rem;max-width:960px;margin:0 auto}
+.form-intro{padding-top:1rem}
+.form-intro h3{font-family:'Playfair Display',serif;font-size:26px;font-weight:400;color:var(--ink);margin-bottom:1rem}
+.form-intro p{font-size:14px;color:var(--ink-mid);line-height:1.7;margin-bottom:1.5rem}
+.form-steps-mini{display:flex;flex-direction:column;gap:12px}
+.fsm-item{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink-mid);transition:color 0.2s}
+.fsm-item.active-step{color:var(--rose-deep);font-weight:500}
+.fsm-dot{width:8px;height:8px;border-radius:50%;background:var(--rose);flex-shrink:0;transition:background 0.2s}
+.fsm-item.active-step .fsm-dot{background:var(--rose-deep)}
+.form-card{background:var(--cream);border-radius:20px;padding:2rem;border:0.5px solid var(--cream-mid)}
+.form-group{margin-bottom:1.2rem}
+.form-group label{display:block;font-size:12px;font-weight:500;color:var(--ink-mid);margin-bottom:6px;letter-spacing:0.5px;text-transform:uppercase}
+.form-group input,.form-group select,.form-group textarea{width:100%;background:white;border:0.5px solid var(--cream-mid);border-radius:10px;padding:10px 14px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--ink);outline:none;transition:border-color 0.2s;resize:none}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--rose)}
+.form-group input.error,.form-group select.error,.form-group textarea.error{border-color:#E05060}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mood-selector{display:flex;gap:8px}
+.mood-btn{flex:1;padding:8px;border:0.5px solid var(--cream-mid);border-radius:8px;background:white;cursor:pointer;font-size:18px;text-align:center;transition:border-color 0.2s,background 0.2s}
+.mood-btn:hover,.mood-btn.active{border-color:var(--rose);background:var(--rose-pale)}
+.submit-btn{width:100%;background:var(--rose-deep);color:white;border:none;border-radius:12px;padding:14px;font-size:14px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;transition:opacity 0.2s,transform 0.15s;margin-top:1rem;display:flex;align-items:center;justify-content:center;gap:8px}
+.submit-btn:hover:not(:disabled){opacity:0.9;transform:translateY(-1px)}
+.submit-btn:disabled{opacity:0.7;cursor:not-allowed;transform:none}
+.next-btn{width:100%;background:var(--sage);color:white;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;transition:opacity 0.2s;margin-top:0.8rem;display:flex;align-items:center;justify-content:center;gap:8px}
+.next-btn:hover{opacity:0.88}
+
+/* ── ABAS ── */
+.form-tabs{display:flex;gap:0;margin-bottom:1.5rem;background:var(--cream-mid);border-radius:10px;padding:3px}
+.form-tab{flex:1;padding:8px;border:none;background:transparent;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;border-radius:8px;color:var(--ink-mid);transition:background 0.2s,color 0.2s;font-weight:400}
+.form-tab.active{background:white;color:var(--rose-deep);font-weight:500}
+
+/* ── PROGRESS BAR ── */
+.progress-bar{height:3px;background:var(--cream-mid);border-radius:2px;margin-bottom:1.5rem;overflow:hidden}
+.progress-fill{height:100%;background:var(--rose-deep);border-radius:2px;transition:width 0.4s ease}
+
+/* ── DIÁRIO ── */
+.diary-section{padding:5rem 3rem;background:var(--cream)}
+.timeline{max-width:680px;margin:0 auto;position:relative}
+.timeline::before{content:'';position:absolute;left:32px;top:0;bottom:0;width:0.5px;background:var(--cream-mid)}
+.timeline-item{display:flex;gap:1.5rem;margin-bottom:2rem;position:relative}
+.timeline-dot{width:64px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;position:relative;z-index:1}
+.t-week{width:48px;height:48px;border-radius:50%;background:var(--rose-pale);border:2px solid var(--rose);display:flex;align-items:center;justify-content:center;flex-direction:column}
+.t-week span{font-size:9px;color:var(--rose-deep);font-weight:500;line-height:1}
+.t-week strong{font-family:'Playfair Display',serif;font-size:14px;color:var(--rose-deep)}
+.t-week.sent{background:var(--sage-pale);border-color:var(--sage)}
+.t-week.sent span,.t-week.sent strong{color:var(--sage)}
+.timeline-content{flex:1;background:white;border-radius:14px;padding:1.2rem 1.5rem;border:0.5px solid var(--cream-mid)}
+.tc-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.tc-date{font-size:11px;color:var(--ink-light)}
+.tc-badge{font-size:11px;padding:3px 10px;border-radius:10px;background:var(--sage-pale);color:var(--sage);font-weight:500}
+.tc-title{font-size:14px;font-weight:500;color:var(--ink);margin-bottom:4px}
+.tc-excerpt{font-size:13px;color:var(--ink-mid);line-height:1.6}
+.tc-tags{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.tc-tag{font-size:11px;padding:3px 10px;border-radius:10px;background:var(--rose-pale);color:var(--rose-deep)}
+.tc-tag.neutral{background:var(--cream-mid);color:var(--ink-mid)}
+.tc-actions{display:flex;gap:8px;margin-top:12px}
+.tc-btn{font-size:12px;padding:5px 12px;border-radius:8px;border:0.5px solid var(--cream-mid);background:white;color:var(--ink-mid);cursor:pointer;display:flex;align-items:center;gap:4px;transition:border-color 0.2s}
+.tc-btn:hover{border-color:var(--rose-deep);color:var(--rose-deep)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--ink);color:white;padding:14px 24px;border-radius:12px;font-size:14px;font-weight:500;opacity:0;transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1);z-index:999;display:flex;align-items:center;gap:10px;max-width:420px;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.success{background:#2D6A4F}
+.toast.error{background:#C0392B}
+
+/* ── MODAL DE SUCESSO ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(44,34,32,0.5);display:flex;align-items:center;justify-content:center;z-index:200;opacity:0;pointer-events:none;transition:opacity 0.3s}
+.modal-overlay.show{opacity:1;pointer-events:all}
+.modal{background:white;border-radius:20px;padding:2.5rem;max-width:440px;width:90%;text-align:center;transform:scale(0.9);transition:transform 0.3s}
+.modal-overlay.show .modal{transform:scale(1)}
+.modal-icon{width:72px;height:72px;background:var(--sage-pale);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-size:32px}
+.modal h3{font-family:'Playfair Display',serif;font-size:24px;font-weight:400;color:var(--ink);margin-bottom:0.8rem}
+.modal p{font-size:14px;color:var(--ink-mid);line-height:1.7;margin-bottom:1.5rem}
+.modal-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.modal-btn{padding:10px 22px;border-radius:20px;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;border:none;transition:opacity 0.2s}
+.modal-btn.primary{background:var(--rose-deep);color:white}
+.modal-btn.secondary{background:var(--sage);color:white}
+.modal-btn:hover{opacity:0.88}
+
+/* ── SETUP BANNER ── */
+.setup-banner{background:#FFF8E1;border:1px solid #FFD54F;border-radius:12px;padding:1rem 1.5rem;margin-bottom:1.5rem;font-size:13px;color:#5D4037;line-height:1.6;display:none}
+.setup-banner.visible{display:block}
+.setup-banner strong{color:#BF360C}
+.setup-banner code{background:#FFE082;padding:2px 6px;border-radius:4px;font-size:12px}
+
+/* ── FOOTER ── */
+footer{background:var(--ink);color:white;padding:3rem;text-align:center}
+.footer-logo{font-family:'Playfair Display',serif;font-size:20px;margin-bottom:0.5rem}
+footer p{font-size:12px;opacity:0.5;margin-top:0.4rem}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ═══════════════════ NAVEGAÇÃO ═══════════════════ -->
+<nav>
+  <div class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg>
+    </div>
+    <span class="logo-text">Plano e Diário de Parto</span>
+  </div>
+  <ul>
+    <li><a href="#" onclick="showSection('home');return false">início</a></li>
+    <li><a href="#" onclick="showSection('form');return false">questionário</a></li>
+    <li><a href="#" onclick="showSection('diary');return false">meu diário</a></li>
+  </ul>
+  <a href="#" class="nav-cta" onclick="showSection('form');return false">Começar agora</a>
+</nav>
+
+<!-- ═══════════════════ HOME ═══════════════════ -->
+<div id="sec-home">
+
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-tag"><span></span> Acompanhamento gestacional</div>
+    <h1>Sua <em>gravidez</em>,<br>registrada com carinho</h1>
+    <p class="hero-sub">Um espaço seguro para acompanhar sua gestação, registrar emoções e compartilhar com sua equipe médica semana a semana.</p>
+    <div class="hero-btns">
+      <a href="#" class="btn-primary" onclick="showSection('form');return false">Começar acompanhamento</a>
+      <a href="#" class="btn-secondary" onclick="scrollToHow();return false">Como funciona</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-blob"></div>
+    <div class="hero-blob2"></div>
+    <div class="hero-card-float">
+      <div class="hero-card-week">Semana atual</div>
+      <div class="hero-card-title">28ª semana</div>
+      <div class="week-bar">
+        <div class="week-label"><span>Progresso</span><span>70%</span></div>
+        <div class="week-track"><div class="week-fill" id="wf" style="width:0"></div></div>
+      </div>
+      <div class="week-bar">
+        <div class="week-label"><span>Registros feitos</span><span>18 semanas</span></div>
+        <div class="week-track"><div class="week-fill" style="width:64%;background:#7DB5A0"></div></div>
+      </div>
+      <div class="hero-mood">
+        <span class="mood-chip"><i class="fas fa-smile"></i> Bem-estar</span>
+        <span class="mood-chip green">✓ Relatório enviado</span>
+        <span class="mood-chip"><i class="fas fa-bed"></i> Sono ok</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="home-how">
+  <div class="section-label">como funciona</div>
+  <h2 class="section-title">Simples, íntimo e eficaz</h2>
+  <p class="section-sub">Quatro passos que transformam sua experiência de pré-natal</p>
+  <div class="steps-grid">
+    <div class="step-card">
+      <span class="step-num">01</span>
+      <div class="step-icon">📝</div>
+      <div class="step-h">Responda semanalmente</div>
+      <p class="step-p">Preencha um formulário simples sobre como foi sua semana, saúde física e emocional.</p>
+    </div>
+    <div class="step-card">
+      <span class="step-num">02</span>
+      <div class="step-icon"><i class="fas fa-heart"></i></div>
+      <div class="step-h">Registre suas emoções</div>
+      <p class="step-p">Espaço dedicado para sentimentos, medos, expectativas e dúvidas desta fase.</p>
+    </div>
+    <div class="step-card">
+      <span class="step-num">03</span>
+      <div class="step-icon sage">📤</div>
+      <div class="step-h">PDF gerado e enviado</div>
+      <p class="step-p">O sistema gera um PDF completo no navegador e envia por e-mail para a sua enfermeira automaticamente.</p>
+    </div>
+    <div class="step-card">
+      <span class="step-num">04</span>
+      <div class="step-icon sage">📖</div>
+      <div class="step-h">Guarde no diário</div>
+      <p class="step-p">Baixe o PDF para seus registros pessoais e acompanhe sua evolução semana a semana.</p>
+    </div>
+  </div>
+</section>
+
+<section class="benefits">
+  <div class="section-label">benefícios</div>
+  <h2 class="section-title">Por que usar?</h2>
+  <p class="section-sub">Pensado para fortalecer o vínculo entre você, seu bebê e sua equipe de saúde</p>
+  <div class="benefits-grid">
+    <div class="benefit-item"><div class="benefit-icon">🕊️</div><div class="benefit-h">Menos ansiedade</div><p class="benefit-p">Exteriorizar sentimentos reduz o peso emocional da gestação.</p></div>
+    <div class="benefit-item"><div class="benefit-icon">💬</div><div class="benefit-h">Melhor comunicação</div><p class="benefit-p">Sua médica recebe um resumo completo antes de cada consulta.</p></div>
+    <div class="benefit-item"><div class="benefit-icon">📖</div><div class="benefit-h">Diário emocional</div><p class="benefit-p">Um registro íntimo e permanente de cada fase da sua gravidez.</p></div>
+    <div class="benefit-item"><div class="benefit-icon">✊</div><div class="benefit-h">Participação ativa</div><p class="benefit-p">Você toma parte ativa nas decisões do seu plano de parto.</p></div>
+    <div class="benefit-item"><div class="benefit-icon">📋</div><div class="benefit-h">Histórico organizado</div><p class="benefit-p">Toda a sua gestação documentada e acessível a qualquer momento.</p></div>
+    <div class="benefit-item"><div class="benefit-icon">🤱</div><div class="benefit-h">Vínculo mãe-bebê</div><p class="benefit-p">Cada registro fortalece a conexão com o bebê que está chegando.</p></div>
+  </div>
+</section>
+</div>
+
+<!-- ═══════════════════ FORMULÁRIO ═══════════════════ -->
+<div id="sec-form" style="display:none">
+<section class="form-section">
+  <div style="text-align:center;margin-bottom:3rem">
+    <div class="section-label">questionário semanal</div>
+    <h2 class="section-title">Como foi sua semana?</h2>
+  </div>
+
+  <!-- AVISO DE CONFIGURAÇÃO (aparece se RESEND_KEY não estiver configurada) -->
+  <div id="setup-banner" class="setup-banner visible" style="max-width:960px;margin:0 auto 2rem">
+    ⚙️ <strong>Configuração necessária:</strong> Para ativar o envio de e-mails, abra este arquivo HTML em um editor, localize a linha <code>const RESEND_API_KEY = ''</code> no script e insira sua chave do <a href="https://resend.com" target="_blank" style="color:var(--rose-deep)">Resend</a>. Também defina o <code>EMAIL_CLINICA</code> com o e-mail fixo da clínica.
+  </div>
+
+  <div class="form-layout">
+    <div class="form-intro">
+      <h3>Conte tudo com calma</h3>
+      <p>Este formulário é seu espaço seguro. Responda com honestidade — cada detalhe ajuda sua médica a cuidar melhor de você.</p>
+      <div class="form-steps-mini" id="steps-mini">
+        <div class="fsm-item active-step" data-step="0"><span class="fsm-dot"></span>Dados pessoais</div>
+        <div class="fsm-item" data-step="1"><span class="fsm-dot"></span>Saúde física</div>
+        <div class="fsm-item" data-step="2"><span class="fsm-dot"></span>Saúde emocional</div>
+        <div class="fsm-item" data-step="3"><span class="fsm-dot"></span>Plano de parto</div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:25%"></div></div>
+      <div class="form-tabs">
+        <button class="form-tab active" onclick="switchTab(0)">Dados</button>
+        <button class="form-tab" onclick="switchTab(1)">Física</button>
+        <button class="form-tab" onclick="switchTab(2)">Emocional</button>
+        <button class="form-tab" onclick="switchTab(3)">Parto</button>
+      </div>
+
+      <!-- ABA 0: DADOS PESSOAIS -->
+      <div id="tab-0">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nome completo *</label>
+            <input id="f-nome" type="text" placeholder="Seu nome completo">
+          </div>
+          <div class="form-group">
+            <label>Idade</label>
+            <input id="f-idade" type="number" placeholder="Ex: 28" min="10" max="60">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Semana gestacional *</label>
+            <input id="f-semana" type="number" placeholder="Ex: 28" min="1" max="42">
+          </div>
+          <div class="form-group">
+            <label>Seu e-mail *</label>
+            <input id="f-email" type="email" placeholder="voce@email.com">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>E-mail da enfermeira / clínica *</label>
+          <input id="f-email-enfermeira" type="email" placeholder="enfermeira@clinica.com">
+          <div style="font-size:11px;color:var(--ink-light);margin-top:4px">O relatório será enviado para este endereço</div>
+        </div>
+        <button class="next-btn" onclick="switchTab(1)">Próximo →</button>
+      </div>
+
+      <!-- ABA 1: SAÚDE FÍSICA -->
+      <div id="tab-1" style="display:none">
+        <div class="form-group">
+          <label>Como está se sentindo esta semana?</label>
+          <select id="f-bem-estar">
+            <option value="">Selecione...</option>
+            <option>Muito bem</option><option>Bem</option><option>Regular</option><option>Não muito bem</option><option>Mal</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Sentiu dores?</label>
+            <select id="f-dores">
+              <option value="">Selecione...</option>
+              <option>Não</option><option>Dores leves</option><option>Dores moderadas</option><option>Dores fortes</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Teve contrações?</label>
+            <select id="f-contracoes">
+              <option value="">Selecione...</option>
+              <option>Não</option><option>Raras</option><option>Frequentes</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Qualidade do sono</label>
+            <select id="f-sono">
+              <option value="">Selecione...</option>
+              <option>Ótimo</option><option>Bom</option><option>Irregular</option><option>Ruim</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Alimentação</label>
+            <select id="f-alimentacao">
+              <option value="">Selecione...</option>
+              <option>Muito boa</option><option>Boa</option><option>Regular</option><option>Com dificuldades</option>
+            </select>
+          </div>
+        </div>
+        <button class="next-btn" onclick="switchTab(2)">Próximo →</button>
+      </div>
+
+      <!-- ABA 2: SAÚDE EMOCIONAL -->
+      <div id="tab-2" style="display:none">
+        <div class="form-group">
+          <label>Como está seu humor esta semana?</label>
+          <div class="mood-selector" id="mood-selector">
+            <button class="mood-btn" onclick="selectMood(this,'😢')">😢</button>
+            <button class="mood-btn" onclick="selectMood(this,'😟')">😟</button>
+            <button class="mood-btn" onclick="selectMood(this,'😐')">😐</button>
+            <button class="mood-btn active" onclick="selectMood(this,'🙂')">🙂</button>
+            <button class="mood-btn" onclick="selectMood(this,'😄')">😄</button>
+          </div>
+          <input type="hidden" id="f-humor" value="🙂">
+        </div>
+        <div class="form-group">
+          <label>O que mais te preocupou esta semana?</label>
+          <textarea id="f-preocupacoes" rows="3" placeholder="Pode compartilhar com liberdade..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>O que te trouxe felicidade?</label>
+          <textarea id="f-felicidade" rows="3" placeholder="Momentos bons merecem ser lembrados..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Gostaria de conversar com sua enfermeira sobre?</label>
+          <textarea id="f-duvidas" rows="2" placeholder="Dúvidas, pedidos, preocupações..."></textarea>
+        </div>
+        <button class="next-btn" onclick="switchTab(3)">Próximo →</button>
+      </div>
+
+      <!-- ABA 3: PLANO DE PARTO + ENVIO -->
+      <div id="tab-3" style="display:none">
+        <div class="form-group">
+          <label>Houve mudanças no plano de parto?</label>
+          <select id="f-plano">
+            <option value="">Selecione...</option>
+            <option>Nenhuma mudança</option><option>Tenho novas preferências</option><option>Quero discutir opções</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Novas escolhas a registrar</label>
+          <textarea id="f-novas-escolhas" rows="2" placeholder="Ex: prefiro iluminação baixa, música suave..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Conte como foi sua semana — campo livre</label>
+          <textarea id="f-relato" rows="5" placeholder="Este é seu espaço. Sem julgamentos. Escreva o que quiser..."></textarea>
+        </div>
+        <button class="submit-btn" id="btn-enviar" onclick="handleSubmit()">
+          <span id="btn-texto">📤 Gerar PDF e enviar para minha Enfermeira</span>
+        </button>
+        <div style="text-align:center;margin-top:10px">
+          <button style="background:none;border:none;font-size:12px;color:var(--ink-light);cursor:pointer;text-decoration:underline" onclick="apenasDownloadPDF()">Só quero baixar o PDF (sem enviar e-mail)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ═══════════════════ DIÁRIO ═══════════════════ -->
+<div id="sec-diary" style="display:none">
+<section class="section diary-section">
+  <div class="section-label">meu diário gestacional</div>
+  <h2 class="section-title" style="margin-bottom:0.5rem">Sua jornada semana a semana</h2>
+  <p class="section-sub">Cada registro salvo localmente é uma memória preciosa desta fase única</p>
+  <div class="timeline" id="diary-timeline"></div>
+  <div style="text-align:center;margin-top:2rem">
+    <button class="btn-primary" onclick="showSection('form')">Registrar esta semana</button>
+  </div>
+</section>
+</div>
+
+<!-- ═══════════════════ MODAL SUCESSO ═══════════════════ -->
+<div class="modal-overlay" id="modal-sucesso">
+  <div class="modal">
+    <div class="modal-icon">✅</div>
+    <h3>Relatório enviado!</h3>
+    <p id="modal-msg">O PDF foi gerado e enviado com sucesso para a sua enfermeira. Uma cópia também foi para o seu e-mail.</p>
+    <div class="modal-actions">
+      <button class="modal-btn secondary" id="btn-baixar-pdf">📥 Baixar PDF</button>
+      <button class="modal-btn primary" onclick="fecharModal()">Ver meu diário</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<footer>
+  <div class="footer-logo">Plano e Diário de Parto</div>
+  <p>Feito com carinho para cada mãe em sua jornada</p>
+</footer>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════
+//  ⚙️  CONFIGURAÇÃO — edite estas duas linhas
+// ════════════════════════════════════════════════════════════
+const RESEND_API_KEY  = 're_YxEiKdtP_2L5F6RSudcW1JZn1nGGWP6oZ';          // cole aqui: re_xxxxxxxxxxxxxxxxx
+const EMAIL_CLINICA   = 'samueltabordaas@gmail.com';          // e-mail fixo da clínica (opcional — sobrescreve o campo do formulário)
+// ════════════════════════════════════════════════════════════
+
+// Estado global
+let selectedMood = '🙂';
+let lastPdfDoc   = null;   // guarda o jsPDF para download posterior
+let diario       = JSON.parse(localStorage.getItem('gestacao_diario') || '[]');
+
+// Aviso de configuração
+if (RESEND_API_KEY) {
+  document.getElementById('setup-banner').classList.remove('visible');
+}
+
+// ── Animação hero ──────────────────────────────────────────
+setTimeout(() => { const wf = document.getElementById('wf'); if (wf) wf.style.width = '70%'; }, 300);
+
+// ── Navegação entre seções ─────────────────────────────────
+function showSection(s) {
+  ['sec-home','sec-form','sec-diary'].forEach(id => {
+    document.getElementById(id).style.display = 'none';
+  });
+  if (s === 'home') {
+    document.getElementById('sec-home').style.display = 'block';
+  } else if (s === 'form') {
+    document.getElementById('sec-form').style.display = 'block';
+    switchTab(0);
+  } else if (s === 'diary') {
+    document.getElementById('sec-diary').style.display = 'block';
+    renderDiario();
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function scrollToHow() {
+  document.getElementById('sec-home').style.display = 'block';
+  setTimeout(() => {
+    document.getElementById('home-how').scrollIntoView({ behavior: 'smooth' });
+  }, 100);
+}
+
+// ── Abas do formulário ─────────────────────────────────────
+function switchTab(n) {
+  for (let i = 0; i < 4; i++) {
+    const panel = document.getElementById('tab-' + i);
+    const btn   = document.querySelectorAll('.form-tab')[i];
+    const step  = document.querySelector(`.fsm-item[data-step="${i}"]`);
+    if (panel) panel.style.display = i === n ? 'block' : 'none';
+    if (btn)   btn.classList.toggle('active', i === n);
+    if (step)  step.classList.toggle('active-step', i === n);
+  }
+  const pcts = [25, 50, 75, 100];
+  document.getElementById('progress-fill').style.width = pcts[n] + '%';
+}
+
+// ── Seleção de humor ───────────────────────────────────────
+function selectMood(el, valor) {
+  document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  selectedMood = valor;
+  document.getElementById('f-humor').value = valor;
+}
+
+// ── Validação aba 0 ────────────────────────────────────────
+function validarEAvancar(aba) {
+  if (aba === 0) {
+    const nome   = document.getElementById('f-nome');
+    const semana = document.getElementById('f-semana');
+    const email  = document.getElementById('f-email');
+    const emailM = document.getElementById('f-email-medica');
+    let ok = true;
+    [nome, semana, email, emailM].forEach(el => {
+      if (!el.value.trim()) { el.classList.add('error'); ok = false; }
+      else el.classList.remove('error');
+    });
+    if (!ok) { showToast('Preencha os campos obrigatórios (*)', 'error'); return; }
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRe.test(email.value)) { email.classList.add('error'); showToast('E-mail inválido', 'error'); return; }
+    if (!emailRe.test(emailM.value)) { emailM.classList.add('error'); showToast('E-mail da médica inválido', 'error'); return; }
+  }
+  switchTab(aba + 1);
+}
+
+// ── Coleta todos os dados do formulário ────────────────────
+function coletarDados() {
+  return {
+    nome:           document.getElementById('f-nome').value.trim(),
+    idade:          document.getElementById('f-idade').value.trim(),
+    semana:         document.getElementById('f-semana').value.trim(),
+    email:          document.getElementById('f-email').value.trim(),
+    emailMedica:    EMAIL_CLINICA || document.getElementById('f-email-medica').value.trim(),
+    bemEstar:       document.getElementById('f-bem-estar').value,
+    dores:          document.getElementById('f-dores').value,
+    contracoes:     document.getElementById('f-contracoes').value,
+    sono:           document.getElementById('f-sono').value,
+    alimentacao:    document.getElementById('f-alimentacao').value,
+    humor:          selectedMood,
+    preocupacoes:   document.getElementById('f-preocupacoes').value.trim(),
+    felicidade:     document.getElementById('f-felicidade').value.trim(),
+    duvidas:        document.getElementById('f-duvidas').value.trim(),
+    plano:          document.getElementById('f-plano').value,
+    novasEscolhas:  document.getElementById('f-novas-escolhas').value.trim(),
+    relato:         document.getElementById('f-relato').value.trim(),
+    data:           new Date().toLocaleDateString('pt-BR'),
+    dataISO:        new Date().toISOString(),
+  };
+}
+
+// ════════════════════════════════════════════════════════════
+//  GERAÇÃO DE PDF com jsPDF
+// ════════════════════════════════════════════════════════════
+function gerarPDF(dados) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  const PW  = 210;   // largura A4
+  const M   = 18;    // margem
+  const CW  = PW - M * 2;
+  let   y   = 0;
+
+  const ROSA    = [201, 106, 122];
+  const SAGE    = [125, 181, 160];
+  const INK     = [44,  34,  32];
+  const INKM    = [92,  77,  74];
+  const PALE    = [253, 240, 242];
+  const CREAM   = [250, 247, 242];
+  const BORDER  = [240, 234, 224];
+
+  // ── Cabeçalho rosa ──────────────────────────────────────
+  doc.setFillColor(...ROSA);
+  doc.rect(0, 0, PW, 38, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(18);
+  doc.text('Gestação com Amor', M, 15);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.text('Relatório Gestacional Semanal', M, 23);
+  doc.text(`Gerado em ${dados.data}`, M, 30);
+  y = 50;
+
+  // ── Função auxiliar: seção ──────────────────────────────
+  function secao(titulo) {
+    if (y > 255) { doc.addPage(); y = 20; }
+    doc.setFillColor(...PALE);
+    doc.rect(M, y - 4, CW, 10, 'F');
+    doc.setTextColor(...ROSA);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.text(titulo, M + 3, y + 3);
+    y += 12;
+  }
+
+  // ── Função auxiliar: campo ──────────────────────────────
+  function campo(label, valor, destaque) {
+    if (!valor) return;
+    if (y > 265) { doc.addPage(); y = 20; }
+    if (destaque) {
+      doc.setFillColor(...CREAM);
+      const linhas = doc.splitTextToSize(valor, CW - 12);
+      const h = linhas.length * 5 + 10;
+      doc.rect(M, y - 2, CW, h, 'F');
+    }
+    doc.setTextColor(...INKM);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8);
+    doc.text(label.toUpperCase(), M + 4, y + 2);
+    doc.setTextColor(...INK);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    const linhas = doc.splitTextToSize(valor || '—', CW - 12);
+    doc.text(linhas, M + 4, y + 7);
+    doc.setDrawColor(...BORDER);
+    doc.rect(M, y - 2, CW, linhas.length * 5 + 10, 'S');
+    y += linhas.length * 5 + 14;
+  }
+
+  // ── Função auxiliar: dois campos lado a lado ────────────
+  function campoDouble(l1, v1, l2, v2) {
+    if (y > 265) { doc.addPage(); y = 20; }
+    const hw = (CW - 4) / 2;
+    [[l1, v1, M], [l2, v2, M + hw + 4]].forEach(([l, v, x]) => {
+      doc.setFillColor(...CREAM);
+      doc.rect(x, y - 2, hw, 20, 'F');
+      doc.setTextColor(...INKM);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8);
+      doc.text(l.toUpperCase(), x + 3, y + 2);
+      doc.setTextColor(...INK);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      doc.text(v || '—', x + 3, y + 10);
+      doc.setDrawColor(...BORDER);
+      doc.rect(x, y - 2, hw, 20, 'S');
+    });
+    y += 24;
+  }
+
+  // ── Conteúdo ────────────────────────────────────────────
+  secao('👤  Dados da Paciente');
+  campoDouble('Nome completo', dados.nome, 'Idade', dados.idade ? dados.idade + ' anos' : '');
+  campoDouble('Semana gestacional', dados.semana + 'ª semana', 'Data do registro', dados.data);
+  campo('E-mail', dados.email);
+
+  secao('🩺  Saúde Física');
+  campoDouble('Bem-estar geral', dados.bemEstar, 'Dores', dados.dores);
+  campoDouble('Contrações', dados.contracoes, 'Qualidade do sono', dados.sono);
+  campo('Alimentação', dados.alimentacao);
+
+  secao('💛  Saúde Emocional');
+  campo('Humor da semana', dados.humor ? `${dados.humor}  ${humorLabel(dados.humor)}` : '');
+  campo('O que mais preocupou', dados.preocupacoes, true);
+  campo('Momentos de felicidade', dados.felicidade, true);
+  campo('Gostaria de conversar com a médica sobre', dados.duvidas, true);
+
+  secao('📋  Plano de Parto');
+  campo('Mudanças no plano', dados.plano);
+  campo('Novas escolhas registradas', dados.novasEscolhas, true);
+
+  secao('✍️  Relato da Semana');
+  campo('Em suas próprias palavras', dados.relato, true);
+
+  // ── Rodapé ──────────────────────────────────────────────
+  const totalPages = doc.internal.getNumberOfPages();
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i);
+    doc.setFillColor(...CREAM);
+    doc.rect(0, 287, PW, 10, 'F');
+    doc.setTextColor(...INKM);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.text('Gestação com Amor — Documento confidencial', M, 293);
+    doc.text(`Página ${i} / ${totalPages}`, PW - M, 293, { align: 'right' });
+  }
+
+  return doc;
+}
+
+function humorLabel(h) {
+  const m = { '😢': 'Muito triste', '😟': 'Triste / Preocupada', '😐': 'Neutro', '🙂': 'Bem', '😄': 'Muito bem / Ótimo' };
+  return m[h] || h;
+}
+
+// ════════════════════════════════════════════════════════════
+//  ENVIO VIA RESEND API
+// ════════════════════════════════════════════════════════════
+async function enviarViaResend(dados, pdfBase64) {
+  if (!RESEND_API_KEY) throw new Error('RESEND_API_KEY não configurada');
+
+  const nomeArquivo = `relatorio-semana${dados.semana}-${dados.nome.replace(/\s+/g,'_')}.pdf`;
+
+  // HTML do e-mail para a médica
+  const htmlMedica = `
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:32px;background:#FAF7F2;font-family:Arial,sans-serif">
+<div style="max-width:600px;margin:0 auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08)">
+  <div style="background:#C96A7A;padding:28px 32px">
+    <h1 style="margin:0;color:#fff;font-size:20px">🤱 Gestação com Amor</h1>
+    <p style="margin:6px 0 0;color:rgba(255,255,255,0.85);font-size:13px">Relatório da ${dados.semana}ª semana — ${dados.nome}</p>
+  </div>
+  <div style="padding:28px 32px">
+    <p style="font-size:15px;color:#2C2220">Sua paciente <strong>${dados.nome}</strong> registrou o acompanhamento da <strong>${dados.semana}ª semana gestacional</strong> em ${dados.data}.</p>
+    <table style="width:100%;border-collapse:collapse;margin:20px 0;font-size:13px">
+      <tr style="background:#FDF0F2"><td colspan="2" style="padding:8px 12px;font-weight:700;color:#C96A7A">Saúde Física</td></tr>
+      <tr><td style="padding:6px 12px;color:#9A8A87;width:40%">Bem-estar</td><td style="padding:6px 12px">${dados.bemEstar || '—'}</td></tr>
+      <tr style="background:#FAF7F2"><td style="padding:6px 12px;color:#9A8A87">Dores</td><td style="padding:6px 12px">${dados.dores || '—'}</td></tr>
+      <tr><td style="padding:6px 12px;color:#9A8A87">Sono</td><td style="padding:6px 12px">${dados.sono || '—'}</td></tr>
+      <tr style="background:#EDF5F2"><td colspan="2" style="padding:8px 12px;font-weight:700;color:#7DB5A0;margin-top:8px">Saúde Emocional</td></tr>
+      <tr><td style="padding:6px 12px;color:#9A8A87">Humor</td><td style="padding:6px 12px">${dados.humor} ${humorLabel(dados.humor)}</td></tr>
+      ${dados.preocupacoes ? `<tr style="background:#FAF7F2"><td style="padding:6px 12px;color:#9A8A87;vertical-align:top">Preocupações</td><td style="padding:6px 12px;font-style:italic">"${dados.preocupacoes}"</td></tr>` : ''}
+      ${dados.duvidas ? `<tr><td style="padding:6px 12px;color:#9A8A87;vertical-align:top">Para conversar</td><td style="padding:6px 12px;font-style:italic;color:#C96A7A">"${dados.duvidas}"</td></tr>` : ''}
+    </table>
+    ${dados.relato ? `<div style="background:#FAF7F2;border-radius:10px;padding:16px;margin-top:8px"><p style="margin:0 0 6px;font-size:11px;color:#9A8A87;text-transform:uppercase;letter-spacing:.5px">Relato da semana</p><p style="margin:0;font-size:14px;color:#2C2220;font-style:italic;line-height:1.7">"${dados.relato}"</p></div>` : ''}
+    <p style="font-size:12px;color:#9A8A87;margin-top:24px;text-align:center">O PDF completo está em anexo a este e-mail.</p>
+  </div>
+</div>
+</body></html>`;
+
+  // E-mail de confirmação para a mãe
+  const htmlMae = `
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:32px;background:#FAF7F2;font-family:Arial,sans-serif">
+<div style="max-width:600px;margin:0 auto;background:#fff;border-radius:16px;overflow:hidden">
+  <div style="background:#C96A7A;padding:28px 32px">
+    <h1 style="margin:0;color:#fff;font-size:20px">🤱 Gestação com Amor</h1>
+    <p style="margin:6px 0 0;color:rgba(255,255,255,0.85);font-size:13px">Seu registro da ${dados.semana}ª semana foi enviado!</p>
+  </div>
+  <div style="padding:28px 32px">
+    <p style="font-size:15px;color:#2C2220">Olá, <strong>${dados.nome}</strong> 💕</p>
+    <p style="font-size:14px;color:#5C4D4A;line-height:1.7">Seu relatório da <strong>${dados.semana}ª semana</strong> foi enviado com sucesso para a sua médica (<strong>${dados.emailMedica}</strong>).</p>
+    <div style="background:#EDF5F2;border-radius:12px;padding:18px 20px;margin:20px 0">
+      <p style="margin:0;font-size:14px;color:#2C2220;line-height:1.7">🌱 Continue registrando semana a semana. Cada entrada é uma memória preciosa desta fase única da sua vida.</p>
+    </div>
+    <p style="font-size:12px;color:#9A8A87;text-align:center">Seu relatório está em anexo como cópia pessoal.</p>
+  </div>
+</div>
+</body></html>`;
+
+  const base64Content = pdfBase64;
+
+  // Dispara os dois e-mails em paralelo
+  const [r1, r2] = await Promise.allSettled([
+    fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from: 'Resend <onboarding@resend.dev>',
+        to: ['samueltabordaas@gmail.com'],
+        subject: `[Relatório] ${dados.semana}ª semana — ${dados.nome}`,
+        html: htmlMedica,
+        attachments: [{ filename: nomeArquivo, content: base64Content }],
+      }),
+    }).then(r => r.json()),
+    fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from: 'Resend <onboarding@resend.dev>',
+        to: [dados.email] ,
+        subject: `Sua ${dados.semana}ª semana foi registrada ✓`,
+        html: htmlMae,
+        attachments: [{ filename: nomeArquivo, content: base64Content }],
+      }),
+    }).then(r => r.json()),
+  ]);
+
+  return { medica: r1, mae: r2 };
+}
+
+// ════════════════════════════════════════════════════════════
+//  HANDLER PRINCIPAL — gera PDF + envia
+// ════════════════════════════════════════════════════════════
+async function handleSubmit() {
+  const dados = coletarDados();
+  if (!dados.nome || !dados.semana || !dados.email) {
+    showToast('Volte à aba Dados e preencha os campos obrigatórios.', 'error');
+    return;
+  }
+
+  const btn   = document.getElementById('btn-enviar');
+  const texto = document.getElementById('btn-texto');
+  btn.disabled = true;
+  texto.textContent = '⏳ Gerando PDF...';
+
+  try {
+    // 1. Gerar PDF
+    const doc = gerarPDF(dados);
+    lastPdfDoc = doc;
+    texto.textContent = '📡 Enviando e-mail...';
+
+    let enviado = false;
+
+    // 2. Tentar envio via Resend
+    if (RESEND_API_KEY) {
+      const pdfBase64 = doc.output('datauristring').split(',')[1];
+      try {
+        await enviarViaResend(dados, pdfBase64);
+        enviado = true;
+      } catch (e) {
+        console.error('Erro Resend:', e);
+      }
+    }
+
+    // 3. Salvar no diário local (localStorage)
+    salvarNoDiario(dados);
+
+    // 4. Mostrar modal de sucesso
+    const msg = enviado
+      ? `O PDF foi gerado e enviado para <strong>${dados.emailMedica}</strong>. Uma cópia também foi para <strong>${dados.email}</strong>.`
+      : `O PDF foi gerado com sucesso! ${RESEND_API_KEY ? 'Houve um problema no envio por e-mail — ' : 'Configure o RESEND_API_KEY para envio automático. Por enquanto '}baixe o PDF e envie manualmente.`;
+    document.getElementById('modal-msg').innerHTML = msg;
+    document.getElementById('btn-baixar-pdf').onclick = () => {
+      lastPdfDoc.save(`relatorio-semana${dados.semana}-${dados.nome.replace(/\s+/g,'_')}.pdf`);
+    };
+    document.getElementById('modal-sucesso').classList.add('show');
+
+  } catch (err) {
+    console.error(err);
+    showToast('Erro ao gerar o relatório. Tente novamente.', 'error');
+    btn.disabled = false;
+    texto.textContent = '📤 Gerar PDF e enviar para minha médica';
+  }
+}
+
+// Apenas download sem enviar e-mail
+function apenasDownloadPDF() {
+  const dados = coletarDados();
+  if (!dados.nome || !dados.semana) {
+    showToast('Preencha pelo menos o nome e a semana.', 'error');
+    return;
+  }
+  const doc = gerarPDF(dados);
+  doc.save(`relatorio-semana${dados.semana}-${dados.nome.replace(/\s+/g,'_')}.pdf`);
+  salvarNoDiario(dados);
+  showToast('PDF baixado!', 'success');
+}
+
+// ── Modal ──────────────────────────────────────────────────
+function fecharModal() {
+  document.getElementById('modal-sucesso').classList.remove('show');
+  showSection('diary');
+}
+
+// ── Diário local (localStorage) ───────────────────────────
+function salvarNoDiario(dados) {
+  diario.unshift({
+    id:       Date.now(),
+    semana:   dados.semana,
+    data:     dados.data,
+    dataISO:  dados.dataISO,
+    nome:     dados.nome,
+    humor:    dados.humor,
+    bemEstar: dados.bemEstar,
+    dores:    dados.dores,
+    sono:     dados.sono,
+    preocupacoes: dados.preocupacoes,
+    felicidade:   dados.felicidade,
+    duvidas:      dados.duvidas,
+    relato:       dados.relato,
+    plano:        dados.plano,
+  });
+  localStorage.setItem('gestacao_diario', JSON.stringify(diario));
+}
+
+function renderDiario() {
+  const tl = document.getElementById('diary-timeline');
+  if (!diario.length) {
+    tl.innerHTML = `<div style="text-align:center;padding:3rem;color:var(--ink-mid)"><div style="font-size:48px;margin-bottom:1rem">📖</div><p>Nenhum registro ainda. Preencha o questionário semanal!</p></div>`;
+    return;
+  }
+  tl.innerHTML = diario.map((r, i) => `
+    <div class="timeline-item">
+      <div class="timeline-dot">
+        <div class="t-week sent"><span>sem</span><strong>${r.semana}</strong></div>
+      </div>
+      <div class="timeline-content">
+        <div class="tc-header">
+          <div class="tc-date">${r.data}</div>
+          <div class="tc-badge">✓ Registrado</div>
+        </div>
+        <div class="tc-title">${r.nome} — ${r.semana}ª semana</div>
+        ${r.relato ? `<p class="tc-excerpt">"${r.relato.substring(0,140)}${r.relato.length>140?'...':''}"</p>` : ''}
+        <div class="tc-tags">
+          ${r.humor ? `<span class="tc-tag">${r.humor} ${humorLabel(r.humor)}</span>` : ''}
+          ${r.bemEstar ? `<span class="tc-tag neutral">${r.bemEstar}</span>` : ''}
+          ${r.dores && r.dores !== 'Não' ? `<span class="tc-tag neutral">${r.dores}</span>` : ''}
+          ${r.sono ? `<span class="tc-tag neutral">Sono: ${r.sono}</span>` : ''}
+        </div>
+        <div class="tc-actions">
+          <button class="tc-btn" onclick="baixarPDFDiario(${i})">📥 Baixar PDF</button>
+          <button class="tc-btn" onclick="removerRegistro(${i})" style="color:#C96A7A">✕ Remover</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function baixarPDFDiario(i) {
+  const r = diario[i];
+  const dadosFake = {
+    nome: r.nome, semana: r.semana, data: r.data, dataISO: r.dataISO,
+    email: '', emailMedica: '',
+    bemEstar: r.bemEstar, dores: r.dores, contracoes: '', sono: r.sono, alimentacao: '',
+    humor: r.humor, preocupacoes: r.preocupacoes, felicidade: r.felicidade,
+    duvidas: r.duvidas, plano: r.plano, novasEscolhas: '', relato: r.relato,
+  };
+  const doc = gerarPDF(dadosFake);
+  doc.save(`relatorio-semana${r.semana}-${r.nome.replace(/\s+/g,'_')}.pdf`);
+}
+
+function removerRegistro(i) {
+  if (!confirm('Remover este registro do diário?')) return;
+  diario.splice(i, 1);
+  localStorage.setItem('gestacao_diario', JSON.stringify(diario));
+  renderDiario();
+}
+
+// ── Toast ──────────────────────────────────────────────────
+function showToast(msg, tipo) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + (tipo || '');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+</script>
+</body>
+</html>
