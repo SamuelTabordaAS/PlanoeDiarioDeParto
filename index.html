@@ -687,27 +687,27 @@ function gerarPDF(dados) {
   }
 
   // ── Conteúdo ────────────────────────────────────────────
-  secao('👤  Dados da Paciente');
+  secao('Dados da Paciente');
   campoDouble('Nome completo', dados.nome, 'Idade', dados.idade ? dados.idade + ' anos' : '');
   campoDouble('Semana gestacional', dados.semana + 'ª semana', 'Data do registro', dados.data);
   campo('E-mail', dados.email);
 
-  secao('🩺  Saúde Física');
-  campoDouble('Bem-estar geral', dados.bemEstar, 'Dores', dados.dores);
+  secao('Saúde Física');
+  campoDouble('Bem-estar geral', dados.bemStar, 'Dores', dados.dores);
   campoDouble('Contrações', dados.contracoes, 'Qualidade do sono', dados.sono);
   campo('Alimentação', dados.alimentacao);
 
-  secao('💛  Saúde Emocional');
+  secao('Saúde Emocional');
   campo('Humor da semana', dados.humor ? `${dados.humor}  ${humorLabel(dados.humor)}` : '');
   campo('O que mais preocupou', dados.preocupacoes, true);
   campo('Momentos de felicidade', dados.felicidade, true);
   campo('Gostaria de conversar com a médica sobre', dados.duvidas, true);
 
-  secao('📋  Plano de Parto');
+  secao('Plano de Parto');
   campo('Mudanças no plano', dados.plano);
   campo('Novas escolhas registradas', dados.novasEscolhas, true);
 
-  secao('✍️  Relato da Semana');
+  secao('Relato da Semana');
   campo('Em suas próprias palavras', dados.relato, true);
 
   // ── Rodapé ──────────────────────────────────────────────
