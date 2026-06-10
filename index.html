@@ -245,7 +245,7 @@ footer p{font-size:12px;opacity:0.5;margin-top:0.4rem}
   <div class="steps-grid">
     <div class="step-card">
       <span class="step-num">01</span>
-      <div class="step-icon">📝</div>
+      <div class="step-icon"><i class="fas fa-edit"></i></div>
       <div class="step-h">Responda semanalmente</div>
       <p class="step-p">Preencha um formulário simples sobre como foi sua semana, saúde física e emocional.</p>
     </div>
@@ -490,7 +490,7 @@ footer p{font-size:12px;opacity:0.5;margin-top:0.4rem}
 //  ⚙️  CONFIGURAÇÃO — edite estas duas linhas
 // ════════════════════════════════════════════════════════════
 const RESEND_API_KEY  = 're_YxEiKdtP_2L5F6RSudcW1JZn1nGGWP6oZ';          // cole aqui: re_xxxxxxxxxxxxxxxxx
-const EMAIL_CLINICA   = 'samueltabordaas@gmail.com';          // e-mail fixo da clínica (opcional — sobrescreve o campo do formulário)
+const EMAIL_CLINICA   = 'enfermeiras@tcc.com.br';          // e-mail fixo da clínica (opcional — sobrescreve o campo do formulário)
 // ════════════════════════════════════════════════════════════
 
 // Estado global
@@ -795,7 +795,7 @@ async function enviarViaResend(dados, pdfBase64) {
       headers: { 'Authorization': `Bearer ${RESEND_API_KEY}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         from: 'Resend <onboarding@resend.dev>',
-        to: ['samueltabordaas@gmail.com'],
+        to: ['enfermeiras@tcc.com.br'],
         subject: `[Relatório] ${dados.semana}ª semana — ${dados.nome}`,
         html: htmlMedica,
         attachments: [{ filename: nomeArquivo, content: base64Content }],
