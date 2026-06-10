@@ -1,0 +1,176 @@
+
+/* ===== ESTILO INSPIRADO NO CADERNO PLANO DE PARTO ===== */
+
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Nunito:wght@300;400;600;700&display=swap');
+
+:root{
+  --rose:#f7a8bc;
+  --rose-deep:#e85b8d;
+  --rose-soft:#fff3f6;
+  --lavender:#c9c8f7;
+  --lavender-soft:#f4f3ff;
+  --mint:#d7f1ea;
+  --cream:#fffdfb;
+  --ink:#1f2c5c;
+  --text:#4b5570;
+  --border:#ece7ef;
+}
+
+body{
+  font-family:'Nunito',sans-serif !important;
+  background:
+    radial-gradient(circle at top left,#eef1ff 0%,transparent 25%),
+    radial-gradient(circle at bottom right,#ffe9ef 0%,transparent 30%),
+    #fffdfb !important;
+  color:var(--text) !important;
+}
+
+nav{
+  background:rgba(255,255,255,.92)!important;
+  border-bottom:1px solid #efeaf3!important;
+  box-shadow:0 4px 20px rgba(50,50,93,.05);
+}
+
+.logo-text,
+h1,h2,h3,
+.section-title{
+  color:var(--ink)!important;
+}
+
+.hero-left h1{
+  font-size:4rem!important;
+  line-height:1.05!important;
+}
+
+.hero-left h1 em{
+  font-family:'Great Vibes',cursive!important;
+  color:var(--rose-deep)!important;
+  font-size:1.2em;
+}
+
+.hero{
+  min-height:700px!important;
+}
+
+.hero-left{
+  background:transparent!important;
+}
+
+.hero-right{
+  background:
+  radial-gradient(circle,#fff 0%,#fff7fa 45%,#eef0ff 100%)!important;
+}
+
+.hero-card-float,
+.step-card,
+.form-card,
+.timeline-content,
+.benefit-item{
+  background:#fff!important;
+  border:1px solid var(--border)!important;
+  border-radius:28px!important;
+  box-shadow:0 12px 40px rgba(70,70,120,.08)!important;
+}
+
+.hero-tag,
+.mood-chip,
+.tc-tag,
+.section-label{
+  background:var(--rose-soft)!important;
+  color:var(--rose-deep)!important;
+  border:none!important;
+}
+
+.btn-primary,
+.submit-btn,
+.nav-cta{
+  background:linear-gradient(135deg,#ff8db0,#e85b8d)!important;
+  border:none!important;
+  border-radius:999px!important;
+  box-shadow:0 10px 24px rgba(232,91,141,.25);
+}
+
+.btn-secondary{
+  border-radius:999px!important;
+  border:1px solid #ddd!important;
+}
+
+.section-title{
+  font-size:3rem!important;
+  font-weight:700!important;
+}
+
+.step-icon,
+.logo-icon{
+  background:linear-gradient(135deg,#ffe5ee,#eef1ff)!important;
+  color:var(--rose-deep)!important;
+}
+
+.benefits{
+  background:
+  linear-gradient(180deg,#fff8fb 0%,#fff 100%)!important;
+  color:var(--text)!important;
+}
+
+.benefits .section-title,
+.benefits .section-sub{
+  color:var(--ink)!important;
+}
+
+.benefit-item{
+  text-align:center;
+}
+
+.form-section,
+.diary-section{
+  background:transparent!important;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select{
+  border:1px solid #e7e1ea!important;
+  border-radius:16px!important;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus{
+  border-color:#f39ab6!important;
+  box-shadow:0 0 0 4px rgba(243,154,182,.15);
+}
+
+.progress-fill,
+.week-fill{
+  background:linear-gradient(90deg,#ff9dbb,#e85b8d)!important;
+}
+
+.form-tabs{
+  background:#f6f3fb!important;
+}
+
+.form-tab.active{
+  color:var(--rose-deep)!important;
+  border-radius:12px!important;
+}
+
+.timeline::before{
+  background:#eadff0!important;
+}
+
+.t-week{
+  background:#fff0f5!important;
+  border-color:#f3aac1!important;
+}
+
+footer{
+  background:#faf6fb!important;
+  color:var(--ink)!important;
+  border-top:1px solid #ece7ef;
+}
+
+.footer-logo{
+  color:var(--rose-deep)!important;
+  font-family:'Great Vibes',cursive!important;
+  font-size:2rem!important;
+}
